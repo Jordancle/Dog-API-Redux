@@ -1,15 +1,18 @@
 import { configureStore } from '@reduxjs/toolkit';
 import counterReducer from '../features/counter/counter-slice';
-import { apiSlice } from '../features/dogs/dogs-api-slice';
+import { dogsApi } from '../features/dogs/dogs-api-slice';
 
 export const store = configureStore({
   reducer: {
     counter: counterReducer,
-    [apiSlice.reducerPath]: apiSlice.reducer
+    // Add the generated reducer as a specific top-level slice
+    [dogsApi.reducerPath]: dogsApi.reducer,
   },
+  // Adding the api middleware enables caching, invalidation, polling,
+  // and other useful features of `rtk-query`.
   middleware: (getDefaultMiddleware) => {
-    return getDefaultMiddleware().concat(apiSlice.middleware);
-  }
+    return getDefaultMiddleware().concat(dogsApi.middleware);
+  },
 });
 
 export type AppDispatch = typeof store.dispatch;

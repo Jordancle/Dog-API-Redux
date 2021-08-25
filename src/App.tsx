@@ -3,14 +3,15 @@ import { useAppDispatch, useAppSelector } from './app/hooks';
 import { incremented, amountAdded } from './features/counter/counter-slice';
 import logo from './logo.svg'
 import './App.css'
-import { useFetchBreedsQuery } from './features/dogs/dogs-api-slice';
+import { useFetchBreedsQuery, useFetchImageQuery } from './features/dogs/dogs-api-slice';
+import DisplayImage from './display-image';
 
 function App() {
   const count = useAppSelector((state) => state.counter.value);
   const dispatch = useAppDispatch();
 
-  const [numDogs, setNumDogs] = useState(10);
-  const { data = {}, isFetching } = useFetchBreedsQuery(numDogs);
+  const [searchBreed, setSearchBreed] = useState('Maltese');
+  const { data = [], isLoading } = useFetchBreedsQuery(searchBreed);
 
   function handleClick() {
     // increment by 1
@@ -18,31 +19,12 @@ function App() {
 
     // increment by a fixed amount
     dispatch(amountAdded(3));
-  } 
+  }
 
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>Hello Vite + React!</p>
-        <p>
-          <button onClick={handleClick}>
-            count is: {count}
-          </button>
-        </p>
-
+  function showDogList(isLoading: boolean) {
+    if (!isLoading) {
+      return (
         <div>
-          <p>Dogs to fetch:</p>
-          <select value={numDogs} onChange={(e) => setNumDogs(Number(e.target.value))}>
-            <option value="5">5</option>
-            <option value="10">10</option>
-            <option value="15">15</option>
-            <option value="20">20</option>
-          </select>
-        </div>
-        
-        <div>
-          <p>Number of dogs fetched: {data.length}</p>
           <table>
             <thead>
               <tr>
@@ -51,17 +33,50 @@ function App() {
               </tr>
             </thead>
             <tbody>
-              {data.length && data.map((breed) => (
+              {data.map((breed) => (
                 <tr key={breed.id}>
                   <td>{breed.name}</td>
                   <td>
-                    <img src={breed.image.url} alt={breed.name} height={250} />
+                    {
+                      breed.reference_image_id &&
+                      <DisplayImage reference_image_id={breed.reference_image_id} />
+                      || 'No Image'
+                    }
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
+      )
+    } else {
+      return 'Loading...';
+    }
+  }
+
+  return (
+    <div className="App">
+      <header className="App-header">
+        {/* <p>
+          <button onClick={handleClick}>
+            count is: {count}
+          </button>
+        </p> */}
+
+        <div>
+          <p>Dogs to fetch:</p>
+          {/* <select value={searchBreed} onChange={(e) => setSearchBreed(Number(e.target.value))}>
+            <option value="5">5</option>
+            <option value="10">10</option>
+            <option value="15">15</option>
+            <option value="20">20</option>
+          </select> */}
+        </div>
+
+        <p>Number of dogs fetched: {data.length}</p>
+        <input onChange={(e) => setSearchBreed(e.target.value)}></input>
+
+        {showDogList(isLoading)}
 
         <p>
           <a
