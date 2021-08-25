@@ -3,7 +3,7 @@ import { useAppDispatch, useAppSelector } from './app/hooks';
 import { incremented, amountAdded } from './features/counter/counter-slice';
 import logo from './logo.svg'
 import './App.css'
-import { useFetchBreedsQuery, useFetchImageQuery } from './features/dogs/dogs-api-slice';
+import { useFetchBreedsQuery } from './features/dogs/dogs-api-slice';
 import DisplayImage from './display-image';
 
 function App() {
