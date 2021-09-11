@@ -5,23 +5,17 @@ import logo from './logo.svg'
 import './App.css'
 import { useFetchBreedsQuery } from './features/dogs/dogs-api-slice';
 import DisplayImage from './display-image';
+import { addFavoriteBreed } from './features/dogs/favorite-breeds-slice';
 
 function App() {
   const count = useAppSelector((state) => state.counter.value);
+  const favoriteBreeds = useAppSelector((state) => state.favoriteBreeds);
   const dispatch = useAppDispatch();
 
-  const [searchBreed, setSearchBreed] = useState('Maltese');
+  const [searchBreed, setSearchBreed] = useState('');
   const { data = [], isLoading } = useFetchBreedsQuery(searchBreed);
 
-  function handleClick() {
-    // increment by 1
-    // dispatch(incremented());
-
-    // increment by a fixed amount
-    dispatch(amountAdded(3));
-  }
-
-  function showDogList(isLoading: boolean) {
+  function showDogList(isLoading: boolean, handleClick) {
     if (!isLoading) {
       return (
         <div>
@@ -34,6 +28,7 @@ function App() {
             </thead>
             <tbody>
               {data.map((breed) => (
+              <button onClick={() => handleClick(breed.name)}>
                 <tr key={breed.id}>
                   <td>{breed.name}</td>
                   <td>
@@ -44,6 +39,7 @@ function App() {
                     }
                   </td>
                 </tr>
+              </button>
               ))}
             </tbody>
           </table>
@@ -54,6 +50,10 @@ function App() {
     }
   }
 
+  function handleClick(breedName) {
+    dispatch(addFavoriteBreed({name: breedName}))
+  }
+
   return (
     <div className="App">
       <header className="App-header">
@@ -62,6 +62,9 @@ function App() {
             count is: {count}
           </button>
         </p> */}
+        {<p>
+          Favorite Breeds are: {JSON.stringify(favoriteBreeds)}
+        </p>}
 
         <div>
           <p>Dogs to fetch:</p>
@@ -76,7 +79,7 @@ function App() {
         <p>Number of dogs fetched: {data.length}</p>
         <input onChange={(e) => setSearchBreed(e.target.value)}></input>
 
-        {showDogList(isLoading)}
+        {showDogList(isLoading, handleClick)}
 
         <p>
           <a
