@@ -1,12 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { Breed } from './dogs-api-slice';
 
-interface Breed {
-  name: string;
-}
-
-const initialState: Breed[] = [{
-  name: 'Jordan'
-}]
+const initialState: Breed[] = [];
 
 const FavoriteBreedsSlice = createSlice({
   name: 'favoriteBreeds',

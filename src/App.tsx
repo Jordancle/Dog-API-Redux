@@ -3,9 +3,13 @@ import { useAppDispatch, useAppSelector } from './app/hooks';
 import { incremented, amountAdded } from './features/counter/counter-slice';
 import logo from './logo.svg'
 import './App.css'
-import { useFetchBreedsQuery } from './features/dogs/dogs-api-slice';
+import { useFetchBreedsQuery, Breed } from './features/dogs/dogs-api-slice';
 import DisplayImage from './display-image';
 import { addFavoriteBreed } from './features/dogs/favorite-breeds-slice';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import Button from 'react-bootstrap/Button';
+import Row from 'react-bootstrap/Row'
+import Col from 'react-bootstrap/Col';
 
 function App() {
   const count = useAppSelector((state) => state.counter.value);
@@ -15,7 +19,7 @@ function App() {
   const [searchBreed, setSearchBreed] = useState('');
   const { data = [], isLoading } = useFetchBreedsQuery(searchBreed);
 
-  function showDogList(isLoading: boolean, handleClick) {
+  function showBreedsList(data: Breed[], isLoading: boolean) {
     if (!isLoading) {
       return (
         <div>
@@ -26,22 +30,22 @@ function App() {
                 <th>Picture</th>
               </tr>
             </thead>
-            <tbody>
+            <>
               {data.map((breed) => (
-              <button onClick={() => handleClick(breed.name)}>
-                <tr key={breed.id}>
-                  <td>{breed.name}</td>
-                  <td>
+                <Button onClick={() => handleClick(breed)}>
+                <Row key={breed.id}>
+                  <Col>{breed.name}</Col>
+                  <Col>
                     {
                       breed.reference_image_id &&
                       <DisplayImage reference_image_id={breed.reference_image_id} />
                       || 'No Image'
                     }
-                  </td>
-                </tr>
-              </button>
+                  </Col>
+                </Row>
+              </Button>
               ))}
-            </tbody>
+            </>
           </table>
         </div>
       )
@@ -50,8 +54,8 @@ function App() {
     }
   }
 
-  function handleClick(breedName) {
-    dispatch(addFavoriteBreed({name: breedName}))
+  function handleClick(breed: Breed): void {
+    dispatch(addFavoriteBreed(breed));
   }
 
   return (
@@ -78,8 +82,11 @@ function App() {
 
         <p>Number of dogs fetched: {data.length}</p>
         <input onChange={(e) => setSearchBreed(e.target.value)}></input>
+        Favorite Breeds List:
+        {showBreedsList(favoriteBreeds, isLoading)}
 
-        {showDogList(isLoading, handleClick)}
+        Breeds List:
+        {showBreedsList(data, isLoading)}
 
         <p>
           <a
