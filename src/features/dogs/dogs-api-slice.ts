@@ -38,7 +38,7 @@ export const dogsApi = createApi({
     fetchBreeds: builder.query<Breed[], string | void>({
       query: (searchBreed) => `/breeds/search?q=${searchBreed}`
     }),
-    fetchImage: builder.query<Image[], string | void>({
+    fetchImage: builder.query<Image, string | void>({
       query: (reference_image_id) => `/images/${reference_image_id}`
     }),
   }),

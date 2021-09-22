@@ -10,6 +10,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import Button from 'react-bootstrap/Button';
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col';
+import FormSelect from 'react-bootstrap/FormSelect';
 
 function App() {
   const count = useAppSelector((state) => state.counter.value);
@@ -18,20 +19,27 @@ function App() {
 
   const [searchBreed, setSearchBreed] = useState('');
   const { data = [], isLoading } = useFetchBreedsQuery(searchBreed);
+  const [searchLimit, setSearchLimit] = useState(5);
+  const [breedsPage, setBreedsPage] = useState(1);
+  const [favoriteBreedsPage, setFavoriteBreedsPage] = useState(1);
+  const nextPage = () => setBreedsPage(breedsPage + 1);
+  const prevPage = () => setBreedsPage(breedsPage - 1);
+  const resetPage = () => setBreedsPage(1);
 
-  function showBreedsList(data: Breed[], isLoading: boolean) {
+  function showBreedsList(data: Breed[], isLoading: boolean, page: number) {
     if (!isLoading) {
+      let startIndex = (page-1)*searchLimit;
       return (
         <div>
           <table>
             <thead>
               <tr>
-                <th>Name</th>
-                <th>Picture</th>
+                {/* <th>Name</th>
+                <th>Picture</th> */}
               </tr>
             </thead>
             <>
-              {data.map((breed) => (
+              {data.slice(startIndex, startIndex + searchLimit).map((breed) => (
                 <Button onClick={() => handleClick(breed)}>
                 <Row key={breed.id}>
                   <Col>{breed.name}</Col>
@@ -61,52 +69,39 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        {/* <p>
-          <button onClick={handleClick}>
-            count is: {count}
-          </button>
-        </p> */}
-        {<p>
-          Favorite Breeds are: {JSON.stringify(favoriteBreeds)}
-        </p>}
-
         <div>
           <p>Dogs to fetch:</p>
-          {/* <select value={searchBreed} onChange={(e) => setSearchBreed(Number(e.target.value))}>
+          <FormSelect value={searchLimit} onChange={(e) => {
+            setSearchLimit(Number(e.target.value));
+            setBreedsPage(1);
+          }}>
             <option value="5">5</option>
             <option value="10">10</option>
             <option value="15">15</option>
             <option value="20">20</option>
-          </select> */}
+          </FormSelect>
+        </div>
+        <div>
+          <Button onClick={prevPage}
+            disabled={breedsPage <= 1}>Previous Page</Button>
+          <Button onClick={nextPage}
+            disabled={data.length <= breedsPage*searchLimit}>Next Page</Button>
+        </div>
+        <div>
+          Current Page: {breedsPage}
         </div>
 
         <p>Number of dogs fetched: {data.length}</p>
-        <input onChange={(e) => setSearchBreed(e.target.value)}></input>
+        <input onChange={(e) => {
+          setSearchBreed(e.target.value)
+          resetPage();  
+        }}></input>
         Favorite Breeds List:
-        {showBreedsList(favoriteBreeds, isLoading)}
+        {showBreedsList(favoriteBreeds, isLoading, favoriteBreedsPage)}
 
         Breeds List:
-        {showBreedsList(data, isLoading)}
+        {showBreedsList(data, isLoading, breedsPage)}
 
-        <p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-          {' | '}
-          <a
-            className="App-link"
-            href="https://vitejs.dev/guide/features.html"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Vite Docs
-          </a>
-        </p>
       </header>
     </div>
   )
