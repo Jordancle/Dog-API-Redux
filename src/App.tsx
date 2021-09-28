@@ -40,7 +40,7 @@ function App() {
             </thead>
             <>
               {data.slice(startIndex, startIndex + searchLimit).map((breed) => (
-                <Button onClick={() => handleClick(breed)}>
+                <Button variant="outline-primary" onClick={() => handleClick(breed)}>
                 <Row key={breed.id}>
                   <Col>{breed.name}</Col>
                   <Col>
@@ -69,8 +69,17 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
+        Favorite Breeds List:
+        {showBreedsList(favoriteBreeds, isLoading, favoriteBreedsPage)}
+
         <div>
           <p>Dogs to fetch:</p>
+          <input onChange={(e) => {
+            setSearchBreed(e.target.value)
+            resetPage();
+          }}></input>
+        </div>
+        <div>
           <FormSelect value={searchLimit} onChange={(e) => {
             setSearchLimit(Number(e.target.value));
             setBreedsPage(1);
@@ -85,19 +94,12 @@ function App() {
           <Button onClick={prevPage}
             disabled={breedsPage <= 1}>Previous Page</Button>
           <Button onClick={nextPage}
-            disabled={data.length <= breedsPage*searchLimit}>Next Page</Button>
+            disabled={data.length <= breedsPage * searchLimit}>Next Page</Button>
         </div>
         <div>
           Current Page: {breedsPage}
         </div>
-
         <p>Number of dogs fetched: {data.length}</p>
-        <input onChange={(e) => {
-          setSearchBreed(e.target.value)
-          resetPage();  
-        }}></input>
-        Favorite Breeds List:
-        {showBreedsList(favoriteBreeds, isLoading, favoriteBreedsPage)}
 
         Breeds List:
         {showBreedsList(data, isLoading, breedsPage)}
