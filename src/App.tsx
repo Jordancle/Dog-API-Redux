@@ -81,7 +81,7 @@ function App() {
         </div>
         <div>
           <FormSelect value={searchLimit} onChange={(e) => {
-            setSearchLimit(Number(e.target.value));
+            setSearchLimit(Number(e.currentTarget.value));
             setBreedsPage(1);
           }}>
             <option value="5">5</option>

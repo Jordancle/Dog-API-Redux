@@ -9,7 +9,7 @@ export interface Breed {
   reference_image_id: string;
 }
 
-interface Image {
+export interface Image {
   id: string;
   url: string;
 }
